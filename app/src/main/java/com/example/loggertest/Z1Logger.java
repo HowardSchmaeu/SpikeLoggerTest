@@ -10,8 +10,9 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
+import ch.qos.logback.core.status.OnConsoleStatusListener;
 import ch.qos.logback.core.util.FileSize;
-import ch.qos.logback.core.util.StatusPrinter;
+import ch.qos.logback.core.util.StatusListenerConfigHelper;
 
 
 
@@ -40,7 +41,7 @@ public class Z1Logger {
 
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-
+        StatusListenerConfigHelper.addOnConsoleListenerInstance(lc, new OnConsoleStatusListener());
 
         // setup FileAppender
         PatternLayoutEncoder encoder1 = new PatternLayoutEncoder();
@@ -98,14 +99,14 @@ public class Z1Logger {
         root.addAppender(logcatAppender);
 
 
-        System.out.println(SEPERATOR_PART_LONG);
-        System.out.println(SEPERATOR_PART_SMALL + "   LOGGER INFO");
-        System.out.println(SEPERATOR_PART_LONG);
-
-        StatusPrinter.print(lc);
-
-        System.out.println(SEPERATOR_PART_LONG);
-        System.out.println(SEPERATOR_PART_LONG);
+//        System.out.println(SEPERATOR_PART_LONG);
+//        System.out.println(SEPERATOR_PART_SMALL + "   LOGGER INFO");
+//        System.out.println(SEPERATOR_PART_LONG);
+//
+//        StatusPrinter.print(lc);
+//
+//        System.out.println(SEPERATOR_PART_LONG);
+//        System.out.println(SEPERATOR_PART_LONG);
 
     }
 
