@@ -9,8 +9,7 @@ import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
-import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import ch.qos.logback.core.util.StatusPrinter;
 
@@ -23,7 +22,7 @@ public class Z1Logger {
     private static String SEPERATOR_PART       = "#########################################";
     private static String SEPERATOR_PART_LONG  = "##################################################################################";
     private static String SEPERATOR_PART_SMALL = "#######";
-    private static final String LOG_FOLDER = "/../log";
+    private static final String LOG_FOLDER = "/log";
 
     public Z1Logger(org.slf4j.Logger logger) {
         main = logger;
@@ -36,8 +35,8 @@ public class Z1Logger {
     public static void configureLogbackDirectly(Context context){
 
         String loggername  = "Z1 Logger";
-        String logFileName = "z1-myLogger";
-        logFile = context.getFilesDir().toString() + LOG_FOLDER + "/" + logFileName +".log";
+        String logFileName = context.getApplicationInfo().dataDir + LOG_FOLDER + "/z1-myLogger";
+        logFile = logFileName + ".log";
 
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
@@ -57,27 +56,17 @@ public class Z1Logger {
         rollingFileAppender.setFile(logFile);
         rollingFileAppender.setEncoder(encoder1);
 
-
-
-        TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
+        SizeAndTimeBasedRollingPolicy rollingPolicy = new SizeAndTimeBasedRollingPolicy();
         rollingPolicy.setContext(lc);
         rollingPolicy.setParent(rollingFileAppender);  // parent and context required!
-        rollingPolicy.setFileNamePattern(logFileName + ".%d{yyyy-MM-dd}.zip");
+        rollingPolicy.setFileNamePattern(logFileName + ".%d{yyyy-MM-dd}-%i.zip");
         rollingPolicy.setMaxHistory(5); // no more than n rollover files (delete oldest)
         rollingPolicy.setTotalSizeCap(FileSize.valueOf("50KB"));
+        rollingPolicy.setMaxFileSize(FileSize.valueOf("50KB"));
+
         rollingPolicy.start();
 
         rollingFileAppender.setRollingPolicy(rollingPolicy);
-
-
-
-        SizeBasedTriggeringPolicy sizeBasedTriggeringPolicy = new SizeBasedTriggeringPolicy();
-        sizeBasedTriggeringPolicy.setContext(lc);
-        sizeBasedTriggeringPolicy.setMaxFileSize(FileSize.valueOf("50KB"));
-        sizeBasedTriggeringPolicy.start();
-
-        rollingFileAppender.setTriggeringPolicy(sizeBasedTriggeringPolicy);
-
 
         rollingFileAppender.start();
 
